@@ -1,5 +1,5 @@
-"Extracts the particle IDs and types of a given halo from the simulation data"
-function extract_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::DataFrame
+"Reads the particle IDs and types of a given halo from the simulation data"
+function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::DataFrame
     input_particles_path = get_ahfparticles_filepath(simspecs)
 
     println("Reading particle IDs and types from $input_particles_path")
@@ -35,9 +35,9 @@ function extract_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::
     println()
     DataFrame(pid = halo_particle_IDs, ptype = halo_particle_types)
 end
-extract_halo_particles_IDs(haloID::Int, simspecs::SimulationSpecs) = extract_halo_particles_IDs(string(haloID), simspecs)
+read_halo_particles_IDs(haloID::Int, simspecs::SimulationSpecs) = read_halo_particles_IDs(string(haloID), simspecs)
 
-function extract_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs)
+function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs)
     particle_types = [0, 1, 4, 5]
     particles_dict = Dict(type => DataFrame() for type in particle_types)
     halo_particles_grouped = groupby(halo_particles, :ptype)
