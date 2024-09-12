@@ -3,6 +3,12 @@ uuid = "3f427d17-6377-4d41-bf72-61d89616e759"
 authors = ["Moorits Mihkel Muru <mmuru@aip.de> and contributors"]
 version = "0.1.0"
 
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+
 [compat]
 julia = "1.6.7"
 
