@@ -109,5 +109,20 @@ function update_particles_dict!(particles_dict::Dict{Int64, DataFrame}, group_di
     )
 end
 
-# TODO: Implement a function to store particle data in a DataFrame
+function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
+    particles_df = DataFrame()
+    particle_types_dict = Dict(
+        0 => :gas,
+        1 => :dm,
+        4 => :stars,
+        5 => :bh,
+    )
+
+    for ptype_num in keys(particles_dict)
+        temp_df = particles_dict[ptype_num]
+        length_df = size(temp_df, 1)
+        temp_df.ptype = fill(particle_types_dict[ptype_num], length_df)
+        append!(particles_df, temp_df)
+    end
+end
 # TODO: Implement a function to write the DataFrame to a Arrow file
