@@ -4,6 +4,7 @@ export SimulationSpecs
 include("snapshot2z.jl") # Dictionary that converts snapshot::Int to correct snapshot-redshift filename string
 
 const base_dir = "/store/clues/HESTIA"
+const project_dir = "~/projects/dmannih"
 
 "Struct containing the simulation specifications"
 struct SimulationSpecs
