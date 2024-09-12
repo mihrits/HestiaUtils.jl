@@ -3,7 +3,7 @@ export SimulationSpecs
 
 include("snapshot2z.jl") # Dictionary that converts snapshot::Int to correct snapshot-redshift filename string
 
-const base_dir = "/store/clues/HESTIA"
+const hestia_dir = "/store/clues/HESTIA"
 const project_dir = "~/projects/dmannih"
 
 "Struct containing the simulation specifications"
@@ -23,7 +23,7 @@ function get_ahfbasepath(simspecs::SimulationSpecs)::String
     AHF_output_dir = simspecs.n_particles == 8192 ? "AHF_output_2x2.5Mpc" : "AHF_output"
 
     joinpath(
-        base_dir, # const in utils.jl
+        hestia_dir, # const in utils.jl
         "RE_SIMS",
         $(simsspecs.n_particles),
         "GAL_FOR",
@@ -53,7 +53,7 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
     output_dir = simspecs.n_particles == 8192 ? "output_2x2.5Mpc" : "output"
 
     snapdir_path = joinpath(
-        base_dir, # const in utils.jl
+        hestia_dir, # const in utils.jl
         "RE_SIMS",
         $(simspecs.n_particles),
         "GAL_FOR",
