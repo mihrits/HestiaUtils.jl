@@ -125,4 +125,8 @@ function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
         append!(particles_df, temp_df)
     end
 end
-# TODO: Implement a function to write the DataFrame to a Arrow file
+
+function write_particles(output_path::String, particles_df::DataFrame, simspecs::SimulationSpecs)
+    fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo_particles.arrow"
+    Arrow.write(joinpath(project_dir, "data", "halo_particles", fout), particles_df) # project_dir is a const in utils.jl
+end
