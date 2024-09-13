@@ -132,7 +132,8 @@ function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
     particle_df
 end
 
-function write_particles(output_path::String, particles_df::DataFrame, simspecs::SimulationSpecs)
-    fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo_particles.arrow"
-    Arrow.write(joinpath(project_dir, "data", "halo_particles", fout), particles_df) # project_dir is a const in utils.jl
+function write_particles(particles_df::DataFrame, haloID::Union{Int, String}, simspecs::SimulationSpecs)
+    fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo$(haloID)_particles.arrow"
+    Arrow.write(joinpath(project_dir, "data", "haloparticles", fout), particles_df) # project_dir is a const in utils.jl
 end
+write_particles(haloID::Union{Int, String}, simspecs::SimulationSpecs) = write_particles(read_particle_data(haloID, simspecs), haloID, simspecs)
