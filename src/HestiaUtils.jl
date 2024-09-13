@@ -1,6 +1,7 @@
 module HestiaUtils
 
 using DataFrames
+using DataFramesMeta
 using ProgressMeter: @showprogress
 using HDF5
 using CSV
