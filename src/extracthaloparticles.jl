@@ -92,7 +92,7 @@ function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs
     end
 
     println()
-    particles_dict
+    convert_particles_dict_to_df(particles_dict)
 end
 
 function update_particles_dict!(particles_dict::Dict{Int64, DataFrame}, group_dict::Dict, mask::Vector{Bool}, particle_type::Int64)
