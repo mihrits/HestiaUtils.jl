@@ -10,5 +10,6 @@ using OhMyThreads
 
 include("utils.jl")
 include("extracthaloparticles.jl")
+include("readmethods.jl")
 
 end
