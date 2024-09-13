@@ -94,6 +94,7 @@ function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs
     println()
     convert_particles_dict_to_df(particles_dict)
 end
+read_particle_data(haloID::Union{Int, String}, simspecs::SimulationSpecs) = read_particle_data(read_halo_particles_IDs(haloID, simspecs), simspecs)
 
 function update_particles_dict!(particles_dict::Dict{Int64, DataFrame}, group_dict::Dict, mask::Vector{Bool}, particle_type::Int64)
     # Separate the matrix datasets into individual columns with numbers appended to the property key
