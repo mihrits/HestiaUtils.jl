@@ -65,3 +65,17 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
     filter!(endswith(".hdf5"), readdir(snapdir_path, join = true, sort = true))
 end
 
+function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::String
+    # 8192 particle simulations AHF outputs include "2x2.5Mpc" in the directory name
+    AHF_output_dir = simspecs.n_particles == 8192 ? "AHF_output_2x2.5Mpc" : "AHF_output"
+
+    joinpath(
+        hestia_dir, # const in utils.jl
+        "RE_SIMS",
+        string(simspecs.n_particles),
+        "GAL_FOR",
+        simspecs.simID,
+        AHF_output_dir,
+        "HESTIA_100Mpc_$(simspecs.n_particles)_$(simspecs.simID).$(simspecs.snapshot)_halo_$(haloID).dat",
+    )
+end
