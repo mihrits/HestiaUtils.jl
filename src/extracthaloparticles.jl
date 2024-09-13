@@ -1,3 +1,6 @@
+export read_particle_data
+export write_particles
+
 "Reads the particle IDs and types of a given halo from the simulation data"
 function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::DataFrame
     input_particles_path = get_ahfparticles_filepath(simspecs)
