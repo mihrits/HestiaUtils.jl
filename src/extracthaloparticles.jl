@@ -1,5 +1,6 @@
 export read_particle_data
 export write_particles
+export write_particles_minimal
 
 "Reads the particle IDs and types of a given halo from the simulation data"
 function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::DataFrame
@@ -137,3 +138,22 @@ function write_particles(particles_df::DataFrame, haloID::Union{Int, String}, si
     Arrow.write(joinpath(project_dir, "data", "haloparticles", fout), particles_df) # project_dir is a const in utils.jl
 end
 write_particles(haloID::Union{Int, String}, simspecs::SimulationSpecs) = write_particles(read_particle_data(haloID, simspecs), haloID, simspecs)
+
+function write_particles_minimal(particles_df::DataFrame, haloID::Union{Int, String}, simspecs::SimulationSpecs)
+    particles_df_minimal = select(particles_df,
+        :ParticleIDs,
+        :ptype,
+        :Coordinates1,
+        :Coordinates2,
+        :Coordinates3,
+        :Velocities1,
+        :Velocities2,
+        :Velocities3,
+        :Masses,
+        :GFM_StellarFormationTime,
+    )
+    fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo$(haloID)_minimal_particles.arrow"
+    Arrow.write(joinpath(project_dir, "data", "haloparticles", fout), particles_df_minimal) # project_dir is a const in utils.jl
+end
+write_particles_minimal(haloID::Union{Int, String}, simspecs::SimulationSpecs) = write_particles_minimal(read_particle_data(haloID, simspecs), haloID, simspecs)
+
