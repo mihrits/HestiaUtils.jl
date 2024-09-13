@@ -126,8 +126,10 @@ function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
         temp_df = particles_dict[ptype_num]
         length_df = size(temp_df, 1)
         temp_df.ptype = fill(particle_types_dict[ptype_num], length_df)
-        append!(particles_df, temp_df)
+        append!(particles_df, temp_df; cols = :union)
     end
+
+    particle_df
 end
 
 function write_particles(output_path::String, particles_df::DataFrame, simspecs::SimulationSpecs)
