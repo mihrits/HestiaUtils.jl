@@ -25,27 +25,27 @@ function get_ahfbasepath(simspecs::SimulationSpecs)::String
     joinpath(
         hestia_dir, # const in utils.jl
         "RE_SIMS",
-        $(simsspecs.n_particles),
+        string(simspecs.n_particles),
         "GAL_FOR",
-        $(simspecs.simID),
+        simspecs.simID,
         AHF_output_dir,
-        "HESTIA_100Mpc_$(simspecs.n_particles)_$(simspecs.simID).$(snapshot2z[simspecs.snapshot]).AHF_",
+        "HESTIA_100Mpc_$(simspecs.n_particles)_$(simspecs.simID).$(snapshot2z_dict[simspecs.snapshot]).AHF_",
     )
 end
 
 "Returns the filepath of the AHF particles file for a given simulation"
 function get_ahfparticles_filepath(simspecs::SimulationSpecs)::String
-    get_ahfbasepath(simspecs, snapshot2z, base_dir) * "particles"
+    get_ahfbasepath(simspecs) * "particles"
 end
 
 "Returns the filepath of the AHF profiles file for a given simulation"
 function get_ahfprofiles_filepath(simspecs::SimulationSpecs)::String
-    get_ahfbasepath(simspecs, snapshot2z, base_dir) * "profiles"
+    get_ahfbasepath(simspecs) * "profiles"
 end
 
 "Returns the filepath of the AHF halos file for a given simulation"
 function get_ahfhalos_filepath(simspecs::SimulationSpecs)::String
-    get_ahfbasepath(simspecs, snapshot2z, base_dir) * "halos"
+    get_ahfbasepath(simspecs) * "halos"
 end
 
 function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
@@ -55,13 +55,13 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
     snapdir_path = joinpath(
         hestia_dir, # const in utils.jl
         "RE_SIMS",
-        $(simspecs.n_particles),
+        string(simspecs.n_particles),
         "GAL_FOR",
-        $(simspecs.simID),
+        simspecs.simID,
         output_dir,
         "snapdir_$(simspecs.snapshot)",
     )
 
-    readdir(snapdir_path, join = true, sort = true)
+    filter!(endswith(".hdf5"), readdir(snapdir_path, join = true, sort = true))
 end
 
