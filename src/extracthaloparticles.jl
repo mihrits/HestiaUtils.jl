@@ -129,7 +129,7 @@ function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
         append!(particles_df, temp_df; cols = :union)
     end
 
-    particle_df
+    particles_df
 end
 
 function write_particles(particles_df::DataFrame, haloID::Union{Int, String}, simspecs::SimulationSpecs)
