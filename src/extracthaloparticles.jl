@@ -48,7 +48,11 @@ function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs
 
     println("In halo particleIDs file:")
     for particle_type in particle_types
-        println("Type $(particle_type) has $(count(==(particle_type), halo_particles.ptype)) particles")
+        pcount = count(==(particle_type), halo_particles.ptype)
+        println("Type $(particle_type) has $(pcount) particles")
+        if pcount == 0
+            deleteat!(particle_types, findfirst(==(particle_type), particle_types))
+        end
     end
     println()
 
