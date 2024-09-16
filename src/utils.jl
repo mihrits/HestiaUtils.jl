@@ -59,8 +59,8 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
         "GAL_FOR",
         simspecs.simID,
         output_dir,
-        "snapdir_$(simspecs.snapshot)",
-    )
+        "snapdir_$(lpad(simspecs.snapshot, 3, '0'))",
+)
 
     filter!(endswith(".hdf5"), readdir(snapdir_path, join = true, sort = true))
 end
