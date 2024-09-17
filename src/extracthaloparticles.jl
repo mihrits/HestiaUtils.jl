@@ -139,7 +139,7 @@ end
 
 function write_particles(particles_df::DataFrame, haloID::Union{Int, String}, simspecs::SimulationSpecs)
     fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo$(haloID)_particles.arrow"
-    Arrow.write(joinpath(project_dir, "data", "haloparticles", fout), particles_df) # project_dir is a const in utils.jl
+    Arrow.write(joinpath(data_dir, "haloparticles", fout), particles_df) # data_dir is a const in utils.jl
 end
 write_particles(haloID::Union{Int, String}, simspecs::SimulationSpecs) = write_particles(read_particle_data(haloID, simspecs), haloID, simspecs)
 
@@ -157,7 +157,7 @@ function write_particles_minimal(particles_df::DataFrame, haloID::Union{Int, Str
         :GFM_StellarFormationTime,
     )
     fout = "HESTIA_$(simspecs.simID)_$(simspecs.n_particles)_halo$(haloID)_minimal_particles.arrow"
-    Arrow.write(joinpath(project_dir, "data", "haloparticles", fout), particles_df_minimal) # project_dir is a const in utils.jl
+    Arrow.write(joinpath(data_dir, "haloparticles", fout), particles_df_minimal) # data_dir is a const in utils.jl
 end
 write_particles_minimal(haloID::Union{Int, String}, simspecs::SimulationSpecs) = write_particles_minimal(read_particle_data(haloID, simspecs), haloID, simspecs)
 
