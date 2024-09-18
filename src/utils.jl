@@ -18,6 +18,12 @@ struct SimulationSpecs
     end
 end
 
+function check_haloID_simspecs_compatibility(haloID::Int, simspecs::SimulationSpecs)::Nothing
+    if evalpoly(10, digits(haloID)[13:end]) != simspecs.snapshot
+        error("HaloID $(haloID) is not compatible with simulation snapshot $(simspecs.snapshot).")
+    end
+end
+
 "Returns the base filepath of the AHF files for a given simulation"
 function get_ahfbasepath(simspecs::SimulationSpecs)::String
     # 8192 particle simulations AHF outputs include "2x2.5Mpc" in the directory name
@@ -67,6 +73,7 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
 end
 
 function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::String
+    check_haloID_simspecs_compatibility(haloID, simspecs)
     # 8192 particle simulations AHF outputs include "2x2.5Mpc" in the directory name
     AHF_output_dir = simspecs.n_particles == 8192 ? "AHF_output_2x2.5Mpc" : "AHF_output"
 

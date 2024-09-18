@@ -2,6 +2,8 @@ export read_ahfmergertree
 export read_ahfprofile
 
 function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
+    check_haloID_simspecs_compatibility(haloID, simspecs)
+    
     filein = get_ahfmergertree_filepath(haloID, simspecs)
     if !isfile(filein) return error("File $(filein) does not exist.") end
 
@@ -29,6 +31,8 @@ function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
 end
 
 function read_ahfprofile(haloID::Int, simspecs::SimulationSpecs)
+    check_haloID_simspecs_compatibility(haloID, simspecs)
+
     filein = get_ahfprofiles_filepath(simspecs)
     if !isfile(filein) return error("File $(filein) does not exist.") end
 
