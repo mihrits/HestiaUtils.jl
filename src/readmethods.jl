@@ -4,7 +4,7 @@ export read_ahfhalos
 
 function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     check_haloID_simspecs_compatibility(haloID, simspecs)
-    
+
     filein = get_ahfmergertree_filepath(haloID, simspecs)
     if !isfile(filein) return error("File $(filein) does not exist.") end
 
@@ -15,12 +15,12 @@ function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     mergertree_header = (
         "Column2"  => :haloID,
         "Column4"  => :Mvir,
-        "Column6"  => :center_x,
-        "Column7"  => :center_y,
-        "Column8"  => :center_z,
-        "Column9"  => :center_vx,
-        "Column10" => :center_vy,
-        "Column11" => :center_vz,
+        "Column6"  => :Xc,
+        "Column7"  => :Yc,
+        "Column8"  => :Zc,
+        "Column9"  => :VXc,
+        "Column10" => :VYc,
+        "Column11" => :VZc,
         "Column12" => :Rvir,
     )
     @chain begin
