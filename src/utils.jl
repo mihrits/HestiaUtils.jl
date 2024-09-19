@@ -1,6 +1,7 @@
 
 export SimulationSpecs
 export get_galvectors_from_profile
+export get_galcenter
 
 include("snapshot2z.jl") # Dictionary that converts snapshot::Int to correct snapshot-redshift filename string
 
@@ -107,4 +108,10 @@ simulation `simspecs` at the smallest radius that is r >= r_min [kpc].
 """
 function get_galvectors_from_profile(haloID::Int, simspec::SimulationSpecs, r_min::Real)
     get_galvectors_from_profile(read_ahfprofile(haloID, simspec), r_min)
+end
+
+function get_galcenter(haloID::Int, simspec::SimulationSpecs)
+    check_haloID_simspecs_compatibility(haloID, simspec)
+    halos = read_ahfhalos(simspec)
+    halos[findfirst(==(haloID), halos.haloID), [:Xc, :Yc, :Zc]] |> collect
 end

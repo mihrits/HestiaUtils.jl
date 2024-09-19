@@ -1,5 +1,6 @@
 export read_ahfmergertree
 export read_ahfprofile
+export read_ahfhalos
 
 function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     check_haloID_simspecs_compatibility(haloID, simspecs)
@@ -86,4 +87,27 @@ function read_ahfprofile(haloID::Int, simspecs::SimulationSpecs)
         "b(12)" => :b,
         "c(13)" => :c,
     )
+end
+
+function read_ahfhalos(simspecs::SimulationSpecs)
+    filein = get_ahfhalos_filepath(simspecs)
+    if !isfile(filein) return error("File $(filein) does not exist.") end
+
+    halos_readin_opts = (comment = "#", header = false, delim = "\t", ignorerepeated = false, select = 1:12)
+
+    halos_header = (
+        "Column1"  => :haloID,
+        "Column2"  => :hostID,
+        "Column3"  => :numSubStruct,
+        "Column4"  => :Mvir,
+        "Column6"  => :Xc,
+        "Column7"  => :Yc,
+        "Column8"  => :Zc,
+        "Column9"  => :VXc,
+        "Column10" => :VYc,
+        "Column11" => :VZc,
+        "Column12" => :Rvir,
+    )
+
+    select!(CSV.read(filein, DataFrame; halos_readin_opts...), halos_header...)
 end
