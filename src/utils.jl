@@ -95,7 +95,7 @@ end
 Returns the Ec (normal of the disk) and Ea (major disk axis) vectors from a given AHF
 profile DataFrame at the smallest radius that is r >= r_min [kpc].
 """
-function get_galvectors_from_profile(profile::DataFrame, r_min::Real)
+function get_galvectors_from_profile(profile::DataFrame, r_min::Real = 10.0)
     idx = findfirst(>=(r_min), profile.r)
     collect(profile[idx, [:Ecx, :Ecy, :Ecz]]), collect(profile[idx, [:Eax, :Eay, :Eaz]])
 end
@@ -106,7 +106,7 @@ end
 Returns the Ec (normal of the disk) and Ea (major disk axis) vectors for `haloID` and
 simulation `simspecs` at the smallest radius that is r >= r_min [kpc].
 """
-function get_galvectors_from_profile(haloID::Int, simspec::SimulationSpecs, r_min::Real)
+function get_galvectors_from_profile(haloID::Int, simspec::SimulationSpecs, r_min::Real = 10.0)
     get_galvectors_from_profile(read_ahfprofile(haloID, simspec), r_min)
 end
 
