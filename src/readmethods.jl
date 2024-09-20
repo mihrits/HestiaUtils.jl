@@ -13,7 +13,7 @@ function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     mergertree_readin_opts = (comment = "#", header = false, delim = "\t", ignorerepeated = false, select = 1:12)
 
     mergertree_header = (
-        "Column2"  => :haloID,
+        "Column2"  => :hostID,
         "Column4"  => :Mvir,
         "Column6"  => :Xc,
         "Column7"  => :Yc,
@@ -26,8 +26,8 @@ function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     @chain begin
         CSV.read(filein, DataFrame; mergertree_readin_opts...)
         # Separate z and ID and parse them into Float and Int
-        select("Column1" => ByRow(split) => [:z, :ID], mergertree_header...)
-        transform!(:z => ByRow(z -> parse(Float64, z)) => :z, :ID => ByRow(id -> parse(Int, id)) => :ID)
+        select("Column1" => ByRow(split) => [:z, :haloID], mergertree_header...)
+        transform!(:z => ByRow(z -> parse(Float64, z)) => :z, :haloID => ByRow(id -> parse(Int, id)) => :haloID)
     end
 end
 
