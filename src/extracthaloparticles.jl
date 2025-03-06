@@ -20,9 +20,9 @@ function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::Dat
                 println("Found specified halo")
                 println("N_particles haloID")
                 println(line)
-                
+
                 n_part = parse(Int, split(line)[1])
-                
+
                 sizehint!(halo_particle_IDs, n_part)
                 sizehint!(halo_particle_types, n_part)
 
@@ -40,6 +40,49 @@ function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::Dat
     DataFrame(pid = halo_particle_IDs, ptype = halo_particle_types)
 end
 read_halo_particles_IDs(haloID::Int, simspecs::SimulationSpecs) = read_halo_particles_IDs(string(haloID), simspecs)
+
+function read_particle_data_binary(halo_particles::DataFrame, simspecs::SimulationSpecs)
+    particle_files = get_simparticle_filepaths(simspecs)
+    println("Looking for $(size(halo_particles, 1)) particles")
+
+    read_blocksize(io::IO) = read(io, Int32)
+    check_block_end(blocksize_init, blocksize_final) = blocksize_init == blocksize_final || error("Incorrect reading of data block.")
+
+    for particle_file in particle_files
+        # Binary file is read according the specification of GADGET-2 user guide section 6
+        # https://wwwmpa.mpa-garching.mpg.de/gadget/users-guide.pdf
+        open(particle_file) do file
+            blocksize = read_blocksize(file)
+            f_pos = position(file)
+            n_particles = read!(file, Array{UInt32}(undef, 6))
+            seek(f, f_pos + blocksize)
+            check_block_end(blocksize, read_blocksize(file))
+
+            blocksize = read_blocksize(file)
+            Coordinates = read!(file, Array{Float32}(undef, 3, blocksize÷(4*3)))
+            check_block_end(blocksize, read_blocksize(file))
+
+            blocksize = read_blocksize(file)
+            Velocities = read!(file, Array{Float32}(undef, 3, blocksize÷(4*3)))
+            check_block_end(blocksize, read_blocksize(file))
+
+            blocksize = read_blocksize(file)
+            ParticleIDs = read!(file, Array{UInt32}(undef, blocksize÷4))
+            check_block_end(blocksize, read_blocksize(file))
+
+            blocksize = read_blocksize(file)
+            Masses = read!(file, Array{Float32}(undef, blocksize÷4))
+            check_block_end(blocksize, read_blocksize(file))
+        end
+
+        mask = zeros(Bool, length(ParticleIDs))
+        pids_set = Set(halo_particles.pid)
+        tmap!(in(pids_set), mask, ParticleIDs)
+
+        # TODO: Use mask on Coordinates, Velocities, Masses
+        # Save the particles in the same way as with HDF5 files
+    end
+end
 
 function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs)
     particle_types = [0, 1, 4, 5]
@@ -75,7 +118,7 @@ function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs
                     rethrow(e)
                 end
             end
-            
+
             all_ids = read(particles, "PartType$(particle_type)/ParticleIDs")
             mask = zeros(Bool, length(all_ids))
             tmap!(in(halo_ids), mask, all_ids)
@@ -83,7 +126,7 @@ function read_particle_data(halo_particles::DataFrame, simspecs::SimulationSpecs
 
             group_dict = read(particles, "PartType" * string(particle_type))
             update_particles_dict!(particles_dict, group_dict, mask, particle_type)
-        
+
         end
 
         close(particles)
@@ -111,7 +154,7 @@ function update_particles_dict!(particles_dict::Dict{Int64, DataFrame}, group_di
             delete!(group_dict, prop_key)
         end
     end
-    
+
     particles_dict[particle_type] = vcat(
         particles_dict[particle_type],
         DataFrame(group_dict)[mask, :] # Only write the lines that are in the mask
