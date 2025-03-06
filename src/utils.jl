@@ -13,9 +13,15 @@ struct SimulationSpecs
     simID::String
     snapshot::Int64
     n_particles::Int64
+    galfor::Bool # Whether the simulation was run with GAL_FOR or DM_ONLY
 
-    function SimulationSpecs(simID::String, snapshot::Int64 = 127, n_particles::Int64 = 8192)
-        new(simID, snapshot, n_particles)
+    function SimulationSpecs(
+        simID::String = "09_18",
+        snapshot::Int64 = 127,
+        n_particles::Int64 = 8192,
+        galfor::Bool = true
+    )
+        new(simID, snapshot, n_particles, galfor)
     end
 end
 
@@ -34,7 +40,7 @@ function get_ahfbasepath(simspecs::SimulationSpecs)::String
         hestia_dir, # const in utils.jl
         "RE_SIMS",
         string(simspecs.n_particles),
-        "GAL_FOR",
+        simspecs.galfor ? "GAL_FOR" : "DM_ONLY",
         simspecs.simID,
         AHF_output_dir,
         "HESTIA_100Mpc_$(simspecs.n_particles)_$(simspecs.simID).$(snapshot2z_dict[simspecs.snapshot]).AHF_",
@@ -64,13 +70,20 @@ function get_simparticle_filepaths(simspecs::SimulationSpecs)::Vector{String}
         hestia_dir, # const in utils.jl
         "RE_SIMS",
         string(simspecs.n_particles),
-        "GAL_FOR",
+        simspecs.galfor ? "GAL_FOR" : "DM_ONLY",
         simspecs.simID,
         output_dir,
         "snapdir_$(lpad(simspecs.snapshot, 3, '0'))",
 )
 
-    filter!(endswith(".hdf5"), readdir(snapdir_path, join = true, sort = true))
+    files = filter(endswith(".hdf5"), readdir(snapdir_path, join = true, sort = true))
+
+    if isempty(files)
+        println("No HDF5 files found, using binary files")
+        files = readdir(snapdir_path, join = true, sort = true)
+    end
+
+    files
 end
 
 function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::String
@@ -82,7 +95,7 @@ function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::Str
         hestia_dir, # const in utils.jl
         "RE_SIMS",
         string(simspecs.n_particles),
-        "GAL_FOR",
+        simspecs.galfor ? "GAL_FOR" : "DM_ONLY",
         simspecs.simID,
         AHF_output_dir,
         "HESTIA_100Mpc_$(simspecs.n_particles)_$(simspecs.simID).$(simspecs.snapshot)_halo_$(haloID).dat",
