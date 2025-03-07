@@ -141,6 +141,7 @@ function read_particle_data_hdf5(halo_particles::DataFrame, simspecs::Simulation
                 end
             end
 
+
             all_ids = read(particles, "PartType$(particle_type)/ParticleIDs")
             mask = zeros(Bool, length(all_ids))
             tmap!(in(halo_ids), mask, all_ids)
@@ -148,6 +149,7 @@ function read_particle_data_hdf5(halo_particles::DataFrame, simspecs::Simulation
 
             group_dict = read(particles, "PartType" * string(particle_type))
             update_particles_dict!(particles_dict, group_dict, mask, particle_type)
+
 
         end
 
@@ -177,6 +179,7 @@ function update_particles_dict!(particles_dict::Dict{Int64, DataFrame}, group_di
             delete!(group_dict, prop_key)
         end
     end
+
 
     particles_dict[particle_type] = vcat(
         particles_dict[particle_type],
