@@ -11,6 +11,17 @@ function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::Dat
     halo_particle_IDs = Vector{Int64}()
     halo_particle_types = Vector{Int64}()
 
+    function parse_line_dmonly(line::String)
+        pid = split(line)[1]
+        parse(Int, pid), 1
+    end
+
+    function parse_line_galfor(line::String)
+        pid, ptype = parse.(Int, split(line))
+    end
+
+    parse_line = simspecs.galfor ? parse_line_galfor : parse_line_dmonly
+
     open(input_particles_path, "r") do file
         readline(file) # Discard first line
         while !eof(file)
@@ -27,8 +38,8 @@ function read_halo_particles_IDs(haloID::String, simspecs::SimulationSpecs)::Dat
                 sizehint!(halo_particle_types, n_part)
 
                 @showprogress for i in 1:n_part
-                    pID, ptype = parse.(Int, split(readline(file)))
-                    push!(halo_particle_IDs, pID)
+                    pid, ptype = parse_line(readline(file))
+                    push!(halo_particle_IDs, pid)
                     push!(halo_particle_types, ptype)
                 end
                 break # After finding the given halo and reading all the IDs, break the while loop
@@ -43,7 +54,7 @@ read_halo_particles_IDs(haloID::Int, simspecs::SimulationSpecs) = read_halo_part
 
 function read_particle_data_binary(halo_particles::DataFrame, simspecs::SimulationSpecs)
     particle_files = get_simparticle_filepaths(simspecs)
-    pids_set = Set(halo_particles.pid) |> (ids -> convert.(UInt32, ids))
+    pids_set = Set(convert.(UInt32, halo_particles.pid))
     println("Looking for $(size(halo_particles, 1)) DM particles")
 
     particles_dict = Dict(1 => DataFrame())
@@ -57,22 +68,18 @@ function read_particle_data_binary(halo_particles::DataFrame, simspecs::Simulati
             break
         end
         println("Reading $(split(particle_file, "/")[end])")
+        file_dict = Dict()
 
         # Binary file is read according the specification of GADGET-2 user guide section 6
         # https://wwwmpa.mpa-garching.mpg.de/gadget/users-guide.pdf
         open(particle_file) do file
-            file_dict = Dict()
             blocksize = read_blocksize(file)
             f_pos = position(file)
             # NOTE: Could make reading faster by only reading the high resolution particles
             # specified in n_particles[2] and then skipping the rest of the particles using
             # seek(file, f_pos + blocksize) and then proceeding to the next block
             n_particles = read!(file, Array{UInt32}(undef, 6))
-            if n_particles[2] == 0
-                println("No DM particles in this file")
-                continue
-            end
-            seek(f, f_pos + blocksize)
+            seek(file, f_pos + blocksize)
             check_block_end(blocksize, read_blocksize(file))
 
             blocksize = read_blocksize(file)
