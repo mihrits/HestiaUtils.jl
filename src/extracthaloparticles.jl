@@ -207,7 +207,7 @@ function convert_particles_dict_to_df(particles_dict::Dict{Int64, DataFrame})
         append!(particles_df, temp_df; cols = :union)
     end
 
-    if !(:GFM_StellarFormationTime in names(particles_df))
+    if !("GFM_StellarFormationTime" in names(particles_df))
         particles_df.GFM_StellarFormationTime = fill(missing, size(particles_df, 1))
     end
 
