@@ -131,17 +131,17 @@ function read_ahfsubhalos(haloID::Int, path_mtree::String; verbose = true)
                     println("N_subhalos: $N_subhalos")
                 end
 
-                sizehint!(subhaloIDs, N_subhalos-1)
+                sizehint!(subhaloIDs, N_subhalos)
                 readline(file) # Skip the first ID because it is the haloID itself
 
-                for _ in 1:N_subhalos-1
+                for _ in 1:N_subhalos
                     subhaloID = parse(Int, readline(file))
                     push!(subhaloIDs, subhaloID)
                 end
 
                 break
             else
-                for _ in N_subhalos
+                for _ in N_subhalos+1
                     readline(file) # Skip the subhalo IDs of this halo
                 end
             end
