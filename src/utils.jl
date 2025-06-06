@@ -103,8 +103,6 @@ function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::Str
 end
 
 function get_ahfsubhalos_filepath(simspecs::SimulationSpecs)::String
-    check_haloID_simspecs_compatibility(haloID, simspecs)
-
     joinpath(
         "store",
         "erebos",
