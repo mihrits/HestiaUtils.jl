@@ -104,8 +104,7 @@ end
 
 function get_ahfsubhalos_filepath(simspecs::SimulationSpecs)::String
     joinpath(
-        "store",
-        "erebos",
+        "z",
         "moortis",
         "projects",
         "hestiasats",
