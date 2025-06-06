@@ -111,3 +111,47 @@ function read_ahfhalos(simspecs::SimulationSpecs)
 
     select!(CSV.read(filein, DataFrame; halos_readin_opts...), halos_header...)
 end
+
+function read_ahfsubhalos(haloID::Int, path_mtree::String; verbose = true)
+    if !isfile(path_mtree)
+        return error("File $(path_mtree) does not exist.")
+    end
+
+    subhaloIDs = Vector{Int64}()
+
+    open(path_mtree, "r") do file
+        readline(file) # Skip initial line with nr of host halos
+        while !eof(file)
+            ID, N_subhalos = readline(file) |> split |> x -> parse.(Int, x)
+
+            if ID == haloID
+                if verbose
+                    println("Found specified halo with ID $haloID")
+                    println("N_subhalos: $N_subhalos")
+                end
+
+                sizehint!(subhaloIDs, N_subhalos-1)
+                readline(file) # Skip the first ID because it is the haloID itself
+
+                for _ in 1:N_subhalos-1
+                    subhaloID = parse(Int, readline(file))
+                    push!(subhaloIDs, subhaloID)
+                end
+
+                break
+            else
+                for _ in N_subhalos
+                    readline(file) # Skip the subhalo IDs of this halo
+                end
+            end
+        end
+    end
+
+    if verbose println() end
+    subhaloIDs
+end
+
+function read_ahfsubhalos(haloID::Int, simspecs::SimulationSpecs; verbose = true)
+    path_mtree = get_ahfsubhalosmtree(haloID, simspecs)
+    read_ahfsubhalos(haloID, path_mtree; verbose = verbose)
+end
