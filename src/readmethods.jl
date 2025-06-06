@@ -1,6 +1,7 @@
 export read_ahfmergertree
 export read_ahfprofile
 export read_ahfhalos
+export read_ahfsubhalos
 
 function read_ahfmergertree(haloID::Int, simspecs::SimulationSpecs)
     check_haloID_simspecs_compatibility(haloID, simspecs)
