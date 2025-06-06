@@ -152,6 +152,6 @@ function read_ahfsubhalos(haloID::Int, path_mtree::String; verbose = true)
 end
 
 function read_ahfsubhalos(haloID::Int, simspecs::SimulationSpecs; verbose = true)
-    path_mtree = get_ahfsubhalosmtree(haloID, simspecs)
+    path_mtree = get_ahfsubhalos_filepath(simspecs)
     read_ahfsubhalos(haloID, path_mtree; verbose = verbose)
 end

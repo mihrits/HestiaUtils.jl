@@ -102,6 +102,21 @@ function get_ahfmergertree_filepath(haloID::Int, simspecs::SimulationSpecs)::Str
     )
 end
 
+function get_ahfsubhalos_filepath(simspecs::SimulationSpecs)::String
+    check_haloID_simspecs_compatibility(haloID, simspecs)
+
+    joinpath(
+        "store",
+        "erebos",
+        "moortis",
+        "projects",
+        "hestiasats",
+        "data",
+        "mergertrees",
+        "HESTIA_$(simspecs.n_particles)_$(simspecs.simID)_graph_all_from_$(simspecs.snapshot)_to_$(simspecs.snapshot)_mtree",
+    )
+end
+
 """
     get_galvectors_from_profile(profile::DataFrame, r_min::Real)
 
